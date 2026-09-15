@@ -13,7 +13,7 @@ export default defineWorkspace([
     test: {
       name: "app",
       include: ["tests/app/**/*.test.ts"],
-      environment: "jsdom",
+      environment: "happy-dom",
       setupFiles: ["tests/app/setup.ts"],
     },
   },
