@@ -41,6 +41,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Stale-while-revalidate loading (`src/app/data/cachedLoader.ts`): serves a platform catalog straight from IndexedDB when its cached checksum matches the current manifest entry, re-fetches and re-caches when the checksum changed, and falls back to the stale cached copy if the network re-fetch fails.
 - `tests/app/`: a separate Vitest project (`vitest.workspace.ts`) running frontend tests under `happy-dom` with `fake-indexeddb`, covering the cache and cached-loader modules; wired into `npm run typecheck` via `tests/app/tsconfig.json`.
 - PWA support via `vite-plugin-pwa`: an installable web app manifest (name, icons, theme colors), a generated service worker that precaches the built app shell (cache-first) and applies a `NetworkFirst` strategy to `/data/*.json` (5s network timeout, 7-day cache expiry), and `PwaStatus.svelte` showing an offline banner, an update-available prompt, and an offline-ready notice.
+- `npm run build:analyze` (`rollup-plugin-visualizer`, gated behind `ANALYZE_BUNDLE`): writes `bundle-analysis.html` with a treemap of module sizes.
+- A manual `vendor` chunk (`zod`, `minisearch`, `idb`, `@tanstack/svelte-virtual`) split from application code in `vite.config.ts`, so vendor code — which changes far less often than app code — is cached independently across deploys.
+- `scripts/check-bundle-size.ts` (`npm run check:bundle-size`): fails if the built app's initial JS exceeds a 100 kB gzip budget; wired into `.github/workflows/ci.yml` after the build step.
 
 ### Changed
 

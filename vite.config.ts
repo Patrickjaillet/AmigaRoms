@@ -1,6 +1,7 @@
 import { defineConfig, type Plugin } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { VitePWA } from "vite-plugin-pwa";
+import { visualizer } from "rollup-plugin-visualizer";
 import { existsSync, createReadStream } from "node:fs";
 import path from "node:path";
 
@@ -35,6 +36,13 @@ export default defineConfig({
   build: {
     outDir: "../dist",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["zod", "minisearch", "idb", "@tanstack/svelte-virtual"],
+        },
+      },
+    },
   },
   plugins: [
     svelte(),
@@ -73,5 +81,14 @@ export default defineConfig({
         ],
       },
     }),
+    ...(process.env["ANALYZE_BUNDLE"]
+      ? [
+          visualizer({
+            filename: path.resolve(import.meta.dirname, "bundle-analysis.html"),
+            gzipSize: true,
+            brotliSize: true,
+          }),
+        ]
+      : []),
   ],
 });
