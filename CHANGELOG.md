@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Dedicated `tests/tsconfig.json` type-checking project, wired into the root project references and `npm run typecheck`.
 - `.github/workflows/deploy.yml`: deploys `/public` to GitHub Pages on every push to `main`.
 - Placeholder landing page (`public/index.html`) with project name and footer attribution, served until the Phase 4 frontend replaces it.
+- `.github/workflows/index.yml`: weekly scheduled (and manually dispatchable) run of the indexer, committing `/data/*.json` back to `main` only when the output changed.
+- `.github/workflows/ci.yml`: runs typecheck, lint, and the test suite on every push to `main` and every pull request.
+- Documented CI/CD workflows and their required (none) secrets and optional configuration variables in `COMPILATION.md`.
 
 ### Changed
 
