@@ -20,8 +20,18 @@ export interface IndexerConfig {
   readonly retryOptions: RetryOptions;
 }
 
+function withoutEmptyValues(env: NodeJS.ProcessEnv): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(env)) {
+    if (value !== undefined && value.length > 0) {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
 export function loadIndexerConfig(env: NodeJS.ProcessEnv = process.env): IndexerConfig {
-  const parsed = EnvSchema.safeParse(env);
+  const parsed = EnvSchema.safeParse(withoutEmptyValues(env));
   if (!parsed.success) {
     const issues = parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ");
     throw new Error(`Invalid indexer environment configuration: ${issues}`);

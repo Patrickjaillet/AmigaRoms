@@ -28,6 +28,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - MiniSearch integration (`src/app/search/index.ts`): typed wrapper indexing `title`/`platform`/`fileName` with fuzzy and prefix search, returning full `RomEntry` objects.
 - UI components: responsive header/search bar, sidebar filter panel (platform, year range, file extension, sort), and a result card (title, platform badge, year, file size, download button), wired together in `App.svelte` with client-side filtering, sorting, and lazy per-platform catalog loading.
 - `.github/workflows/deploy.yml` now runs `npm run build` and copies `/data` into the build output before publishing to GitHub Pages.
+- `.github/pull_request_template.md`: checklist covering typecheck/lint/test, schema versioning, the Archive.org type boundary rule, and roadmap/changelog upkeep.
+- Job summary on `.github/workflows/index.yml` runs: a per-platform table of total/new/updated/removed entries and errors, written to `$GITHUB_STEP_SUMMARY`.
+- `diffCatalogEntries` in `scripts/lib/output.ts`: compares the previous `/data/{platform}.json` on disk against the newly indexed entries (by `id`, `md5`, and file size) to compute added/updated/removed counts.
+- Vite build cache (`actions/cache` on `node_modules/.vite`) in `.github/workflows/deploy.yml`.
+- Branch protection on `main` requiring the CI `quality` check to pass.
 
 ### Changed
 
@@ -41,3 +46,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `src/utils/http.ts` builds request headers via the `Headers` API instead of spreading `RequestInit.headers` (which can be array-shaped) into a plain object.
 - Replaced a `while (true)` pagination loop in `scripts/lib/discover.ts` with an equivalent `for` loop, removing the need for an ESLint suppression comment.
 - Removed non-null assertions and non-awaited `async` test helpers in `tests/indexer/*.test.ts` flagged by strict-type-checked lint rules.
+- `scripts/config.ts` now treats empty-string environment variables (as GitHub Actions sets for unset repository variables referenced via `vars.*`) the same as unset ones, applying their defaults instead of failing schema validation. This was causing every `Index` workflow run to crash immediately with "Invalid indexer environment configuration".

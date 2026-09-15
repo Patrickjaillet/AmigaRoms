@@ -1,5 +1,6 @@
 #!/usr/bin/env tsx
 import process from "node:process";
+import { appendFile } from "node:fs/promises";
 import {
   PLATFORMS,
   validatePlatformsConfig,
@@ -13,7 +14,7 @@ import { parseCliArgs } from "./lib/cli.js";
 import { discoverItems } from "./lib/discover.js";
 import { fetchItemMetadata } from "./lib/metadata.js";
 import { deduplicateAndSort, itemMetadataToRomEntries } from "./lib/transform.js";
-import { writeManifest, writePlatformCatalog } from "./lib/output.js";
+import { writeManifest, writePlatformCatalog, type CatalogDiff } from "./lib/output.js";
 import type { ManifestPlatformEntry } from "../src/types/rom.js";
 
 const DATA_DIR = new URL("../data", import.meta.url).pathname;
@@ -32,7 +33,11 @@ async function indexPlatform(
     dryRun: boolean;
   },
   generatedAt: string,
-): Promise<{ report: IndexingReport; manifestEntry: ManifestPlatformEntry | null }> {
+): Promise<{
+  report: IndexingReport;
+  manifestEntry: ManifestPlatformEntry | null;
+  diff: CatalogDiff | null;
+}> {
   const startedAt = Date.now();
   const errors: IndexingError[] = [];
 
@@ -58,6 +63,7 @@ async function indexPlatform(
         durationMs: Date.now() - startedAt,
       },
       manifestEntry: null,
+      diff: null,
     };
   }
 
@@ -94,6 +100,7 @@ async function indexPlatform(
         durationMs: Date.now() - startedAt,
       },
       manifestEntry: null,
+      diff: null,
     };
   }
 
@@ -120,6 +127,7 @@ async function indexPlatform(
         durationMs: Date.now() - startedAt,
       },
       manifestEntry: null,
+      diff: null,
     };
   }
 
@@ -132,7 +140,8 @@ async function indexPlatform(
       errors,
       durationMs: Date.now() - startedAt,
     },
-    manifestEntry: writeResult.value,
+    manifestEntry: writeResult.value.manifestEntry,
+    diff: writeResult.value.diff,
   };
 }
 
@@ -156,10 +165,11 @@ async function main(): Promise<void> {
   }
 
   const manifestEntries: ManifestPlatformEntry[] = [];
+  const summaryRows: string[] = [];
 
   for (const platform of targetPlatforms) {
     console.info(`[${platform.platformId}] indexing (dry-run: ${String(cli.dryRun)})...`);
-    const { report, manifestEntry } = await indexPlatform(
+    const { report, manifestEntry, diff } = await indexPlatform(
       platform,
       {
         baseUrl: config.archiveOrgBaseUrl,
@@ -176,6 +186,22 @@ async function main(): Promise<void> {
     if (manifestEntry) {
       manifestEntries.push(manifestEntry);
     }
+    summaryRows.push(
+      `| ${platform.platformId} | ${String(report.entriesWritten)} | ${String(diff?.added ?? 0)} | ${String(diff?.updated ?? 0)} | ${String(diff?.removed ?? 0)} | ${String(report.errors.length)} |`,
+    );
+  }
+
+  const summaryPath = process.env["GITHUB_STEP_SUMMARY"];
+  if (summaryPath) {
+    const summary = [
+      "## Indexing report",
+      "",
+      "| Platform | Total entries | New | Updated | Removed | Errors |",
+      "|---|---|---|---|---|---|",
+      ...summaryRows,
+      "",
+    ].join("\n");
+    await appendFile(summaryPath, summary);
   }
 
   if (!cli.dryRun && manifestEntries.length > 0) {

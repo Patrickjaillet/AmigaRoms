@@ -50,6 +50,33 @@ describe("writePlatformCatalog", () => {
       expect(result.error.issues.length).toBeGreaterThan(0);
     }
   });
+
+  it("reports added/updated/removed entries relative to the previous catalog on disk", async () => {
+    const first = await writePlatformCatalog("amiga", [sampleEntry], dataDir, FIXED_TIMESTAMP);
+    expect(first.ok).toBe(true);
+    if (first.ok) {
+      expect(first.value.diff).toEqual({ added: 1, updated: 0, removed: 0 });
+    }
+
+    const updatedEntry: RomEntry = { ...sampleEntry, fileSizeBytes: sampleEntry.fileSizeBytes + 1 };
+    const otherEntry: RomEntry = { ...sampleEntry, id: "def456", fileName: "Other.adf" };
+    const second = await writePlatformCatalog(
+      "amiga",
+      [updatedEntry, otherEntry],
+      dataDir,
+      FIXED_TIMESTAMP,
+    );
+    expect(second.ok).toBe(true);
+    if (second.ok) {
+      expect(second.value.diff).toEqual({ added: 1, updated: 1, removed: 0 });
+    }
+
+    const third = await writePlatformCatalog("amiga", [otherEntry], dataDir, FIXED_TIMESTAMP);
+    expect(third.ok).toBe(true);
+    if (third.ok) {
+      expect(third.value.diff).toEqual({ added: 0, updated: 0, removed: 1 });
+    }
+  });
 });
 
 describe("writeManifest", () => {
