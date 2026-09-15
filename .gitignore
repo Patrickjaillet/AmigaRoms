@@ -6,3 +6,4 @@ public/build/
 .DS_Store
 ROADMAP.md
 CLAUDE.md
+.claude/

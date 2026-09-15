@@ -10,6 +10,7 @@ import type { Limiter } from "../../src/utils/concurrency.js";
 import { ok, err, type Result } from "../../src/utils/result.js";
 
 const ROWS_PER_PAGE = 100;
+const MAX_PAGES_PER_COLLECTION = 2000;
 
 export interface DiscoverDeps {
   readonly baseUrl: string;
@@ -42,7 +43,9 @@ export async function discoverItems(
   const errors: DiscoveryError[] = [];
 
   for (const collection of platform.archiveCollections) {
-    for (let page = 1; ; page += 1) {
+    let docsSeen = 0;
+
+    for (let page = 1; page <= MAX_PAGES_PER_COLLECTION; page += 1) {
       const url = buildSearchUrl(deps.baseUrl, collection, page);
       const result = await deps.limiter(() =>
         fetchJson(
@@ -61,8 +64,12 @@ export async function discoverItems(
       for (const doc of result.value.response.docs) {
         identifiers.add(doc.identifier);
       }
+      docsSeen += result.value.response.docs.length;
 
-      if (result.value.response.docs.length < ROWS_PER_PAGE) {
+      if (
+        result.value.response.docs.length < ROWS_PER_PAGE ||
+        docsSeen >= result.value.response.numFound
+      ) {
         break;
       }
     }
