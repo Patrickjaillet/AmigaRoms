@@ -10,5 +10,10 @@
     "rootDir": "..",
     "composite": false
   },
-  "include": ["../tests/**/*.ts", "../src/types/**/*.ts", "../src/config/**/*.ts", "../src/utils/**/*.ts"]
+  "include": [
+    "../tests/**/*.ts",
+    "../src/types/**/*.ts",
+    "../src/config/**/*.ts",
+    "../src/utils/**/*.ts"
+  ]
 }

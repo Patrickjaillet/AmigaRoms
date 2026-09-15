@@ -26,7 +26,8 @@ const sampleEntry: RomEntry = {
   fileName: "Workbench_1.3.adf",
   fileExtension: "adf",
   fileSizeBytes: 901120,
-  downloadUrl: "https://ia601504.us.archive.org/29/items/softwarelibrary_amiga_workbench/Workbench_1.3.adf",
+  downloadUrl:
+    "https://ia601504.us.archive.org/29/items/softwarelibrary_amiga_workbench/Workbench_1.3.adf",
   archiveIdentifier: "softwarelibrary_amiga_workbench",
   md5: "a1b2c3d4e5f60718293a4b5c6d7e8f90",
   indexedAt: FIXED_TIMESTAMP,
@@ -54,7 +55,15 @@ describe("writePlatformCatalog", () => {
 describe("writeManifest", () => {
   it("writes a schema-valid manifest referencing platform files", async () => {
     const result = await writeManifest(
-      [{ platform: "amiga", file: "amiga.json", entryCount: 1, checksum: "deadbeef", lastUpdated: FIXED_TIMESTAMP }],
+      [
+        {
+          platform: "amiga",
+          file: "amiga.json",
+          entryCount: 1,
+          checksum: "deadbeef",
+          lastUpdated: FIXED_TIMESTAMP,
+        },
+      ],
       dataDir,
       FIXED_TIMESTAMP,
     );

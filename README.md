@@ -4,11 +4,13 @@ Static ROM catalog and search engine indexing Archive.org collections (Amiga, MS
 
 ## Screenshot
 
-_Frontend not yet implemented — screenshot pending Phase 4._
+![GamesRoms UI preview](docs/screenshot.png)
+
+_UI preview with sample entries — the live catalog data is populated by the indexer._
 
 ## Stack
 
-TypeScript (strict), Node.js, zod, Vite, MiniSearch, idb, GitHub Actions.
+TypeScript (strict), Node.js, zod, Vite, Svelte 5, MiniSearch, idb, GitHub Actions.
 
 ## Getting started
 

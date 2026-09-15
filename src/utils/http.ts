@@ -17,7 +17,11 @@ export type FetchJsonError =
   | { readonly kind: "network"; readonly message: string }
   | { readonly kind: "http-status"; readonly status: number; readonly url: string }
   | { readonly kind: "invalid-json"; readonly url: string }
-  | { readonly kind: "schema-validation"; readonly url: string; readonly issues: readonly string[] };
+  | {
+      readonly kind: "schema-validation";
+      readonly url: string;
+      readonly issues: readonly string[];
+    };
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -49,7 +53,10 @@ export async function fetchJson<T>(
       headers.set("Accept", "application/json");
       response = await fetch(url, { ...init, headers });
     } catch (cause) {
-      lastError = { kind: "network", message: cause instanceof Error ? cause.message : String(cause) };
+      lastError = {
+        kind: "network",
+        message: cause instanceof Error ? cause.message : String(cause),
+      };
       await sleep(backoffDelay(attempt, retryOptions));
       continue;
     }
@@ -75,7 +82,9 @@ export async function fetchJson<T>(
       return err({
         kind: "schema-validation",
         url,
-        issues: parsed.error.issues.map((issue) => `${issue.path.join(".") || "<root>"}: ${issue.message}`),
+        issues: parsed.error.issues.map(
+          (issue) => `${issue.path.join(".") || "<root>"}: ${issue.message}`,
+        ),
       });
     }
 

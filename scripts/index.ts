@@ -1,6 +1,10 @@
 #!/usr/bin/env tsx
 import process from "node:process";
-import { PLATFORMS, validatePlatformsConfig, type PlatformConfig } from "../src/config/platforms.config.js";
+import {
+  PLATFORMS,
+  validatePlatformsConfig,
+  type PlatformConfig,
+} from "../src/config/platforms.config.js";
 import type { IndexingError, IndexingReport, RomEntry } from "../src/types/rom.js";
 import { createLimiter } from "../src/utils/concurrency.js";
 import type { RetryOptions } from "../src/utils/http.js";
@@ -93,10 +97,18 @@ async function indexPlatform(
     };
   }
 
-  const writeResult = await writePlatformCatalog(platform.platformId, finalEntries, DATA_DIR, generatedAt);
+  const writeResult = await writePlatformCatalog(
+    platform.platformId,
+    finalEntries,
+    DATA_DIR,
+    generatedAt,
+  );
 
   if (!writeResult.ok) {
-    console.error(`[${platform.platformId}] catalog failed schema validation:`, writeResult.error.issues);
+    console.error(
+      `[${platform.platformId}] catalog failed schema validation:`,
+      writeResult.error.issues,
+    );
     process.exitCode = 1;
     return {
       report: {

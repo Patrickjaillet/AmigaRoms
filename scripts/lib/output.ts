@@ -38,7 +38,9 @@ export async function writePlatformCatalog(
   if (!validation.success) {
     return err({
       platform: platformId,
-      issues: validation.error.issues.map((issue) => `${issue.path.join(".") || "<root>"}: ${issue.message}`),
+      issues: validation.error.issues.map(
+        (issue) => `${issue.path.join(".") || "<root>"}: ${issue.message}`,
+      ),
     });
   }
 
@@ -71,7 +73,9 @@ export async function writeManifest(
   if (!validation.success) {
     return err({
       platform: "<manifest>",
-      issues: validation.error.issues.map((issue) => `${issue.path.join(".") || "<root>"}: ${issue.message}`),
+      issues: validation.error.issues.map(
+        (issue) => `${issue.path.join(".") || "<root>"}: ${issue.message}`,
+      ),
     });
   }
 

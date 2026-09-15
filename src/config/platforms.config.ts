@@ -42,9 +42,7 @@ export const PLATFORMS: readonly PlatformConfig[] = [
   },
 ] as const;
 
-export function validatePlatformsConfig(
-  platforms: readonly PlatformConfig[] = PLATFORMS,
-): void {
+export function validatePlatformsConfig(platforms: readonly PlatformConfig[] = PLATFORMS): void {
   const seen = new Set<string>();
   for (const platform of platforms) {
     const result = PlatformConfigSchema.safeParse(platform);

@@ -1,6 +1,11 @@
 import { ArchiveOrgSearchResponseSchema } from "../../src/types/archive-org.js";
 import type { PlatformConfig } from "../../src/config/platforms.config.js";
-import { fetchJson, DEFAULT_RETRY_OPTIONS, type FetchJsonError, type RetryOptions } from "../../src/utils/http.js";
+import {
+  fetchJson,
+  DEFAULT_RETRY_OPTIONS,
+  type FetchJsonError,
+  type RetryOptions,
+} from "../../src/utils/http.js";
 import type { Limiter } from "../../src/utils/concurrency.js";
 import { ok, err, type Result } from "../../src/utils/result.js";
 
@@ -40,7 +45,12 @@ export async function discoverItems(
     for (let page = 1; ; page += 1) {
       const url = buildSearchUrl(deps.baseUrl, collection, page);
       const result = await deps.limiter(() =>
-        fetchJson(url, ArchiveOrgSearchResponseSchema, {}, deps.retryOptions ?? DEFAULT_RETRY_OPTIONS),
+        fetchJson(
+          url,
+          ArchiveOrgSearchResponseSchema,
+          {},
+          deps.retryOptions ?? DEFAULT_RETRY_OPTIONS,
+        ),
       );
 
       if (!result.ok) {

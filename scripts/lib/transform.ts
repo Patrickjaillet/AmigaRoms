@@ -25,7 +25,10 @@ function normalizeYear(metadata: ArchiveOrgItemMetadata["metadata"]): number | n
   return null;
 }
 
-function normalizeCollection(metadata: ArchiveOrgItemMetadata["metadata"], fallback: string): string {
+function normalizeCollection(
+  metadata: ArchiveOrgItemMetadata["metadata"],
+  fallback: string,
+): string {
   if (Array.isArray(metadata.collection)) {
     return metadata.collection[0] ?? fallback;
   }
@@ -33,11 +36,7 @@ function normalizeCollection(metadata: ArchiveOrgItemMetadata["metadata"], fallb
 }
 
 function buildDownloadUrl(server: string, dir: string, fileName: string): string {
-  const encodedPath = dir
-    .split("/")
-    .filter(Boolean)
-    .map(encodeURIComponent)
-    .join("/");
+  const encodedPath = dir.split("/").filter(Boolean).map(encodeURIComponent).join("/");
   return `https://${server}/${encodedPath}/${encodeURIComponent(fileName)}`;
 }
 

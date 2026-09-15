@@ -22,32 +22,44 @@ changes.
 
 ## Module boundaries
 
-| Module | Responsibility | Allowed imports |
-|---|---|---|
-| `scripts/` | Discovery, extraction, transformation, JSON output | `src/types/*`, `src/config/*`, `src/utils/*` (Node-safe only) |
-| `src/types/archive-org.ts` | External API shapes + validation | `zod` only |
-| `src/types/rom.ts` | Internal canonical schema + validation | `zod` only |
-| `src/config/platforms.config.ts` | Platform → Archive.org collection mapping | `zod`, `src/types/rom.ts` (schema types only) |
-| `src/` (frontend) | UI, search, cache | `src/types/rom.ts`, `src/config/*`, browser APIs |
-| `data/` | Generated output, never hand-edited | — |
+| Module                           | Responsibility                                         | Allowed imports                                               |
+| -------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------- |
+| `scripts/`                       | Discovery, extraction, transformation, JSON output     | `src/types/*`, `src/config/*`, `src/utils/*` (Node-safe only) |
+| `src/types/archive-org.ts`       | External API shapes + validation                       | `zod` only                                                    |
+| `src/types/rom.ts`               | Internal canonical schema + validation                 | `zod` only                                                    |
+| `src/config/platforms.config.ts` | Platform → Archive.org collection mapping              | `zod`, `src/types/rom.ts` (schema types only)                 |
+| `src/app/`                       | Svelte UI, data loaders, search index, app-level types | `src/types/rom.ts`, `src/config/*`, browser APIs              |
+| `data/`                          | Generated output, never hand-edited                    | —                                                             |
 
-`src/utils/id.ts` uses `node:crypto` and is therefore indexer-only; it must
-not be imported from frontend code (enforced by code review until an
-ESLint `no-restricted-imports` rule is added in Phase 2).
+`src/utils/id.ts` uses `node:crypto` and is indexer-only; it is excluded
+from `src/tsconfig.json`'s `include`, so importing it from frontend code
+fails the frontend typecheck.
+
+The frontend fetches catalogs at `{BASE_URL}data/{platform}.json` and the
+manifest at `{BASE_URL}data/manifest.json`, where `BASE_URL` is Vite's
+`import.meta.env.BASE_URL` (`/GamesRoms/` in production, matching the
+GitHub Pages project path). In dev, `vite.config.ts` registers a middleware
+that serves the repository's `data/` directory under that path so the same
+fetch calls work identically in `vite dev` and in the built site. In CI,
+`.github/workflows/deploy.yml` runs `npm run build` then copies `data/` into
+`dist/data/` before publishing to Pages.
 
 ## Frontend framework decision
 
-**Decision: Vite + TypeScript, framework choice deferred to start of Phase 4.**
+**Decision (Phase 4): Vite + TypeScript + Svelte 5.**
 
-| Option | Pros | Cons |
-|---|---|---|
-| Vanilla TS + Vite | Zero framework overhead, smallest bundle, full control over DOM updates | More boilerplate for reactive filter/search state |
-| Svelte + Vite | Compiles away, small runtime, ergonomic reactivity for filters/pagination | Extra build step, team must learn Svelte syntax |
+| Option            | Pros                                                                      | Cons                                              |
+| ----------------- | ------------------------------------------------------------------------- | ------------------------------------------------- |
+| Vanilla TS + Vite | Zero framework overhead, smallest bundle, full control over DOM updates   | More boilerplate for reactive filter/search state |
+| Svelte + Vite     | Compiles away, small runtime, ergonomic reactivity for filters/pagination | Extra build step, team must learn Svelte syntax   |
 
-Both compile through the same `src/tsconfig.json` and Vite pipeline defined
-in Phase 1, so the decision does not block Phase 1–3 work. Re-evaluate at
-the start of Phase 4 based on team familiarity; lean Svelte if reactive
-filter state (multi-criteria search + pagination) proves verbose in vanilla TS.
+Svelte was chosen for its ergonomic reactivity (`$state`/`$derived`/`$effect`
+runes) across the multi-criteria search, filter, and lazy-loading state in
+Phase 4. Frontend source lives under `src/app/` (components, data loaders,
+search index, app-level types) and imports the shared `src/types`,
+`src/config`, and `src/utils` modules directly — it does not duplicate them.
+`svelte-check` (wired into `npm run typecheck`) type-checks `.svelte` files
+against `src/tsconfig.json`; ESLint lints them via `svelte-eslint-parser`.
 
 ## Legal / compliance notes
 

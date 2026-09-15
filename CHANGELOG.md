@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `.github/workflows/index.yml`: weekly scheduled (and manually dispatchable) run of the indexer, committing `/data/*.json` back to `main` only when the output changed.
 - `.github/workflows/ci.yml`: runs typecheck, lint, and the test suite on every push to `main` and every pull request.
 - Documented CI/CD workflows and their required (none) secrets and optional configuration variables in `COMPILATION.md`.
+- Svelte 5 + Vite frontend scaffold under `src/app/`: app-level types (`AppState`, `SearchFilters`, `SortOption`, `LoadingState`), typed data loaders for platform catalogs and the manifest, a `debounce` utility, and a `vite.config.ts` dev middleware serving `/data/*.json` at the same path the production build uses.
+- MiniSearch integration (`src/app/search/index.ts`): typed wrapper indexing `title`/`platform`/`fileName` with fuzzy and prefix search, returning full `RomEntry` objects.
+- UI components: responsive header/search bar, sidebar filter panel (platform, year range, file extension, sort), and a result card (title, platform badge, year, file size, download button), wired together in `App.svelte` with client-side filtering, sorting, and lazy per-platform catalog loading.
+- `.github/workflows/deploy.yml` now runs `npm run build` and copies `/data` into the build output before publishing to GitHub Pages.
 
 ### Changed
 
