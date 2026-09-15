@@ -1,6 +1,7 @@
 #!/usr/bin/env tsx
 import process from "node:process";
 import { appendFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import {
   PLATFORMS,
   validatePlatformsConfig,
@@ -23,7 +24,7 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function indexPlatform(
+export async function indexPlatform(
   platform: PlatformConfig,
   deps: {
     baseUrl: string;
@@ -70,14 +71,19 @@ async function indexPlatform(
   const identifiers = discovery.value;
   const allEntries: RomEntry[] = [];
 
-  for (const identifier of identifiers) {
-    const metadataResult = await fetchItemMetadata(identifier, {
-      baseUrl: deps.baseUrl,
-      limiter: deps.limiter,
-      retryOptions: deps.retryOptions,
-    });
-    await sleep(deps.requestDelayMs);
+  const metadataResults = await Promise.all(
+    identifiers.map(async (identifier) => {
+      const result = await fetchItemMetadata(identifier, {
+        baseUrl: deps.baseUrl,
+        limiter: deps.limiter,
+        retryOptions: deps.retryOptions,
+      });
+      await sleep(deps.requestDelayMs);
+      return { identifier, result };
+    }),
+  );
 
+  for (const { identifier, result: metadataResult } of metadataResults) {
     if (!metadataResult.ok) {
       errors.push({ identifier, reason: `metadata fetch failed: ${metadataResult.error.kind}` });
       continue;
@@ -213,7 +219,9 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((error: unknown) => {
-  console.error("Indexer crashed:", error);
-  process.exitCode = 1;
-});
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch((error: unknown) => {
+    console.error("Indexer crashed:", error);
+    process.exitCode = 1;
+  });
+}

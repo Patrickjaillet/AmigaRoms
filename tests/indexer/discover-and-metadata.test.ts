@@ -81,6 +81,43 @@ describe("discoverItems (mocked fetch)", () => {
     expect(requestedPages).toBeLessThanOrEqual(3 * amiga.archiveCollections.length);
   });
 
+  it("fetches pages after the first one concurrently instead of one page at a time", async () => {
+    const totalPages = 8;
+    const pageLatencyMs = 40;
+
+    const fetchMock = vi.fn((url: string) => {
+      const pageMatch = /page=(\d+)/.exec(url);
+      const page = pageMatch?.[1] ? Number.parseInt(pageMatch[1], 10) : 1;
+      const docs = Array.from({ length: 100 }, (_, i) => ({
+        identifier: `item-${String((page - 1) * 100 + i)}`,
+      }));
+      return new Promise<Response>((resolve) => {
+        setTimeout(() => {
+          resolve(
+            jsonResponse({
+              responseHeader: { status: 0, QTime: 1 },
+              response: { numFound: totalPages * 100, start: (page - 1) * 100, docs },
+            }),
+          );
+        }, pageLatencyMs);
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const amiga = getPlatformConfig("amiga");
+    if (!amiga) {
+      throw new Error("amiga platform config not found");
+    }
+    const limiter = createLimiter(4);
+    const startedAt = Date.now();
+    const result = await discoverItems(amiga, { baseUrl: "https://archive.org", limiter });
+    const elapsedMs = Date.now() - startedAt;
+
+    expect(result.ok).toBe(true);
+    const sequentialWorstCaseMs = totalPages * pageLatencyMs * amiga.archiveCollections.length;
+    expect(elapsedMs).toBeLessThan(sequentialWorstCaseMs * 0.7);
+  });
+
   it("collects a discovery error without throwing when a page request fails", async () => {
     const fetchMock = vi.fn(() => jsonResponse({ error: "boom" }, 500));
     vi.stubGlobal("fetch", fetchMock);
