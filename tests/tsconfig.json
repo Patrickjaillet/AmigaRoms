@@ -15,5 +15,6 @@
     "../src/types/**/*.ts",
     "../src/config/**/*.ts",
     "../src/utils/**/*.ts"
-  ]
+  ],
+  "exclude": ["../tests/app/**"]
 }

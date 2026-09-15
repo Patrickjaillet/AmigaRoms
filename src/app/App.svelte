@@ -1,7 +1,7 @@
 <script lang="ts">
   import { PLATFORMS } from "../config/platforms.config.js";
-  import type { RomEntry } from "../types/rom.js";
-  import { loadPlatformCatalog } from "./data/loader.js";
+  import type { RomEntry, SearchIndexManifest } from "../types/rom.js";
+  import { loadManifestOrNull, loadPlatformCatalogWithCache } from "./data/cachedLoader.js";
   import { createSearchIndex, type RomSearchIndex } from "./search/index.js";
   import { debounce } from "./utils/debounce.js";
   import { DEFAULT_SEARCH_FILTERS, type LoadingState, type SearchFilters } from "./types/app.js";
@@ -15,6 +15,8 @@
   let loadedPlatforms = $state<ReadonlySet<string>>(new Set());
   let searchIndex: RomSearchIndex = createSearchIndex();
   let allEntries = $state<readonly RomEntry[]>([]);
+  let manifest = $state<SearchIndexManifest | null>(null);
+  let manifestFetched = $state(false);
 
   const SKELETON_PLACEHOLDERS = Array.from({ length: 12 }, (_, index) => index);
 
@@ -23,29 +25,40 @@
   );
 
   $effect(() => {
+    if (manifestFetched) {
+      return;
+    }
+    manifestFetched = true;
+    void loadManifestOrNull().then((result) => {
+      manifest = result;
+    });
+  });
+
+  $effect(() => {
+    if (!manifestFetched) {
+      return;
+    }
     const toLoad = targetPlatformIds.filter((id) => !loadedPlatforms.has(id));
     if (toLoad.length === 0) {
       return;
     }
+    loadedPlatforms = new Set([...loadedPlatforms, ...toLoad]);
     void loadPlatforms(toLoad);
   });
 
   async function loadPlatforms(platformIds: readonly string[]): Promise<void> {
     loading = { kind: "loading" };
-    const newlyLoaded = new Set(loadedPlatforms);
     const newEntries: RomEntry[] = [];
 
     for (const platformId of platformIds) {
-      const result = await loadPlatformCatalog(platformId);
+      const result = await loadPlatformCatalogWithCache(platformId, manifest);
       if (result.ok) {
-        newEntries.push(...result.value.entries);
-        newlyLoaded.add(platformId);
+        newEntries.push(...result.value.catalog.entries);
       }
     }
 
     searchIndex.addAll(newEntries);
     allEntries = [...allEntries, ...newEntries];
-    loadedPlatforms = newlyLoaded;
     loading = { kind: "loaded" };
   }
 

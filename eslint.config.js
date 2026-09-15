@@ -26,6 +26,7 @@ export default [
       "src/utils/**/*.ts",
       "tests/**/*.ts",
     ],
+    ignores: ["tests/app/**/*.ts"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -42,16 +43,17 @@ export default [
     rules: sharedRules,
   },
   {
-    files: ["src/**/*.ts"],
+    files: ["src/**/*.ts", "tests/app/**/*.ts"],
     ignores: ["src/types/**/*.ts", "src/config/**/*.ts", "src/utils/**/*.ts"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
-        project: ["./src/tsconfig.json"],
+        project: ["./src/tsconfig.json", "./tests/app/tsconfig.json"],
         tsconfigRootDir: import.meta.dirname,
       },
       globals: {
         ...globals.browser,
+        ...globals.node,
       },
     },
     plugins: {
