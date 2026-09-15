@@ -72,7 +72,15 @@ beforeEach(async () => {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.useRealTimers();
 });
+
+async function runWithFakeTimers<T>(work: () => Promise<T>): Promise<T> {
+  vi.useFakeTimers();
+  const promise = work();
+  await vi.runAllTimersAsync();
+  return promise;
+}
 
 describe("loadPlatformCatalogWithCache", () => {
   it("fetches fresh and caches it when nothing is cached yet", async () => {
@@ -133,7 +141,9 @@ describe("loadPlatformCatalogWithCache", () => {
       vi.fn(() => Promise.reject(new Error("network down"))),
     );
 
-    const result = await loadPlatformCatalogWithCache("amiga", manifestWithChecksum("checksum-2"));
+    const result = await runWithFakeTimers(() =>
+      loadPlatformCatalogWithCache("amiga", manifestWithChecksum("checksum-2")),
+    );
 
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -148,7 +158,9 @@ describe("loadPlatformCatalogWithCache", () => {
       vi.fn(() => Promise.reject(new Error("network down"))),
     );
 
-    const result = await loadPlatformCatalogWithCache("amiga", manifestWithChecksum("checksum-1"));
+    const result = await runWithFakeTimers(() =>
+      loadPlatformCatalogWithCache("amiga", manifestWithChecksum("checksum-1")),
+    );
 
     expect(result.ok).toBe(false);
     if (!result.ok) {

@@ -44,6 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `npm run build:analyze` (`rollup-plugin-visualizer`, gated behind `ANALYZE_BUNDLE`): writes `bundle-analysis.html` with a treemap of module sizes.
 - A manual `vendor` chunk (`zod`, `minisearch`, `idb`, `@tanstack/svelte-virtual`) split from application code in `vite.config.ts`, so vendor code — which changes far less often than app code — is cached independently across deploys.
 - `scripts/check-bundle-size.ts` (`npm run check:bundle-size`): fails if the built app's initial JS exceeds a 100 kB gzip budget; wired into `.github/workflows/ci.yml` after the build step.
+- Retry-with-backoff for the frontend's data loaders (`src/app/data/loader.ts`): retries retryable HTTP statuses (429/5xx) and network failures with exponential backoff (2 retries by default), separate from the indexer's own retry logic.
+- User-facing error states with a Retry action in `App.svelte`: a dismissable banner when some platforms fail to load (showing results from the ones that did), and a full error state with a Retry button when every platform fails.
 
 ### Changed
 

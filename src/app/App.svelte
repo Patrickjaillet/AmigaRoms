@@ -18,6 +18,7 @@
   let allEntries = $state<readonly RomEntry[]>([]);
   let manifest = $state<SearchIndexManifest | null>(null);
   let manifestFetched = $state(false);
+  let failedPlatforms = $state<readonly string[]>([]);
 
   const SKELETON_PLACEHOLDERS = Array.from({ length: 12 }, (_, index) => index);
 
@@ -50,17 +51,36 @@
   async function loadPlatforms(platformIds: readonly string[]): Promise<void> {
     loading = { kind: "loading" };
     const newEntries: RomEntry[] = [];
+    const failed: string[] = [];
 
     for (const platformId of platformIds) {
       const result = await loadPlatformCatalogWithCache(platformId, manifest);
       if (result.ok) {
         newEntries.push(...result.value.catalog.entries);
+      } else {
+        failed.push(platformId);
       }
     }
 
     searchIndex.addAll(newEntries);
     allEntries = [...allEntries, ...newEntries];
-    loading = { kind: "loaded" };
+    failedPlatforms = [...failedPlatforms.filter((id) => !platformIds.includes(id)), ...failed];
+
+    if (failed.length > 0 && allEntries.length === 0) {
+      loading = {
+        kind: "error",
+        message: `Could not load the catalog for: ${failed.join(", ")}.`,
+      };
+    } else {
+      loading = { kind: "loaded" };
+    }
+  }
+
+  function retryFailedPlatforms(): void {
+    const toRetry = failedPlatforms;
+    failedPlatforms = [];
+    loadedPlatforms = new Set([...loadedPlatforms].filter((id) => !toRetry.includes(id)));
+    void loadPlatforms(toRetry);
   }
 
   const debouncedSetQuery = debounce((value: string) => {
@@ -149,6 +169,15 @@
           {filteredResults.length === 1 ? "result" : "results"} found
         {/if}
       </p>
+      {#if failedPlatforms.length > 0 && allEntries.length > 0}
+        <div class="status error retry-banner">
+          <span
+            >Could not load: {failedPlatforms.join(", ")}. Showing results from the platforms that
+            did load.</span
+          >
+          <button type="button" onclick={retryFailedPlatforms}>Retry</button>
+        </div>
+      {/if}
       {#if loading.kind === "loading" && allEntries.length === 0}
         <div class="results-grid">
           {#each SKELETON_PLACEHOLDERS as placeholder (placeholder)}
@@ -156,7 +185,10 @@
           {/each}
         </div>
       {:else if loading.kind === "error"}
-        <p class="status error">{loading.message}</p>
+        <div class="status error retry-banner">
+          <span>{loading.message}</span>
+          <button type="button" onclick={retryFailedPlatforms}>Retry</button>
+        </div>
       {:else if filteredResults.length === 0}
         <p class="status">No results found.</p>
       {:else}
@@ -255,6 +287,29 @@
 
   .status.error {
     color: #dc2626;
+  }
+
+  .retry-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.375rem;
+    background: light-dark(#fef2f2, #3f1d1d);
+  }
+
+  .retry-banner button {
+    flex-shrink: 0;
+    padding: 0.4rem 0.9rem;
+    border-radius: 0.375rem;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
   }
 
   .site-footer {
