@@ -21,8 +21,9 @@ export function createSearchIndex(entries: readonly RomEntry[] = []): RomSearchI
     fields: [...SEARCH_FIELDS],
     searchOptions: {
       prefix: true,
-      fuzzy: 0.2,
+      fuzzy: (term: string): number | boolean => (term.length >= 5 ? 0.1 : false),
       boost: { title: 2 },
+      combineWith: "AND",
     },
   });
 

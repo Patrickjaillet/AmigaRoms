@@ -19,6 +19,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@tanstack/svelte-virtual": "^3.13.39",
     "idb": "^8.0.0",
     "minisearch": "^7.1.0",
     "p-limit": "^6.1.0",

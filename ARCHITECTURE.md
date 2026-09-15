@@ -61,6 +61,13 @@ search index, app-level types) and imports the shared `src/types`,
 `svelte-check` (wired into `npm run typecheck`) type-checks `.svelte` files
 against `src/tsconfig.json`; ESLint lints them via `svelte-eslint-parser`.
 
+The result grid is row-virtualized with `@tanstack/svelte-virtual`
+(`src/app/components/VirtualResultGrid.svelte`): only the rows near the
+viewport are mounted, regardless of how many entries match the active
+filters, so the DOM stays small even for a full multi-platform catalog.
+Column count is derived from the container width at each row height
+estimate, keeping the existing responsive `auto-fill` grid layout.
+
 ## Legal / compliance notes
 
 - Respect Archive.org's [Terms of Use](https://archive.org/about/terms.php):

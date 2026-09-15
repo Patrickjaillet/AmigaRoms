@@ -6,7 +6,8 @@
   import { debounce } from "./utils/debounce.js";
   import { DEFAULT_SEARCH_FILTERS, type LoadingState, type SearchFilters } from "./types/app.js";
   import FilterPanel from "./components/FilterPanel.svelte";
-  import ResultCard from "./components/ResultCard.svelte";
+  import VirtualResultGrid from "./components/VirtualResultGrid.svelte";
+  import ResultCardSkeleton from "./components/ResultCardSkeleton.svelte";
 
   let filters = $state<SearchFilters>(DEFAULT_SEARCH_FILTERS);
   let searchQuery = $state("");
@@ -14,6 +15,8 @@
   let loadedPlatforms = $state<ReadonlySet<string>>(new Set());
   let searchIndex: RomSearchIndex = createSearchIndex();
   let allEntries = $state<readonly RomEntry[]>([]);
+
+  const SKELETON_PLACEHOLDERS = Array.from({ length: 12 }, (_, index) => index);
 
   const targetPlatformIds = $derived(
     filters.platformIds.length > 0 ? filters.platformIds : PLATFORMS.map((p) => p.platformId),
@@ -120,17 +123,17 @@
 
     <main class="results">
       {#if loading.kind === "loading" && allEntries.length === 0}
-        <p class="status">Loading catalog…</p>
+        <div class="results-grid">
+          {#each SKELETON_PLACEHOLDERS as placeholder (placeholder)}
+            <ResultCardSkeleton />
+          {/each}
+        </div>
       {:else if loading.kind === "error"}
         <p class="status error">{loading.message}</p>
       {:else if filteredResults.length === 0}
         <p class="status">No results found.</p>
       {:else}
-        <div class="results-grid">
-          {#each filteredResults as entry (entry.id)}
-            <ResultCard {entry} />
-          {/each}
-        </div>
+        <VirtualResultGrid entries={filteredResults} />
       {/if}
     </main>
   </div>

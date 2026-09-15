@@ -33,9 +33,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - `diffCatalogEntries` in `scripts/lib/output.ts`: compares the previous `/data/{platform}.json` on disk against the newly indexed entries (by `id`, `md5`, and file size) to compute added/updated/removed counts.
 - Vite build cache (`actions/cache` on `node_modules/.vite`) in `.github/workflows/deploy.yml`.
 - Branch protection on `main` requiring the CI `quality` check to pass.
+- Row-based virtual scrolling for the result grid (`src/app/components/VirtualResultGrid.svelte`, via `@tanstack/svelte-virtual`), rendering only the rows near the viewport regardless of how many entries match the current filters.
+- Skeleton loading state (`src/app/components/ResultCardSkeleton.svelte`) shown while the first platform catalogs are loading.
 
 ### Changed
 
+- Search now combines query terms with `AND` and disables fuzzy matching on short terms (`src/app/search/index.ts`), fixing results that matched almost every entry when a query contained short, very common words.
 - Renamed the package to `gamesroms` in `package.json`.
 - Removed all comments (JSDoc and inline) from source and test files.
 
