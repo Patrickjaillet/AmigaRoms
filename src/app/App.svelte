@@ -8,6 +8,7 @@
   import FilterPanel from "./components/FilterPanel.svelte";
   import VirtualResultGrid from "./components/VirtualResultGrid.svelte";
   import ResultCardSkeleton from "./components/ResultCardSkeleton.svelte";
+  import PwaStatus from "./components/PwaStatus.svelte";
 
   let filters = $state<SearchFilters>(DEFAULT_SEARCH_FILTERS);
   let searchQuery = $state("");
@@ -115,6 +116,7 @@
 </script>
 
 <div class="layout">
+  <PwaStatus />
   <header class="site-header">
     <h1>GamesRoms</h1>
     <div class="search-field">

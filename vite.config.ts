@@ -1,5 +1,6 @@
 import { defineConfig, type Plugin } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { VitePWA } from "vite-plugin-pwa";
 import { existsSync, createReadStream } from "node:fs";
 import path from "node:path";
 
@@ -35,5 +36,42 @@ export default defineConfig({
     outDir: "../dist",
     emptyOutDir: true,
   },
-  plugins: [svelte(), serveDataDir()],
+  plugins: [
+    svelte(),
+    serveDataDir(),
+    VitePWA({
+      registerType: "autoUpdate",
+      includeAssets: ["favicon.png", "apple-touch-icon.png"],
+      manifest: {
+        name: "GamesRoms",
+        short_name: "GamesRoms",
+        description: "Static ROM catalog & search engine indexing Archive.org collections.",
+        theme_color: "#2563eb",
+        background_color: "#f7f8fa",
+        display: "standalone",
+        start_url: BASE,
+        scope: BASE,
+        icons: [
+          { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
+          { src: "pwa-512x512.png", sizes: "512x512", type: "image/png" },
+          { src: "pwa-512x512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+        ],
+      },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+        runtimeCaching: [
+          {
+            urlPattern: /\/data\/.*\.json$/,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "gamesroms-data",
+              networkTimeoutSeconds: 5,
+              expiration: { maxEntries: 32, maxAgeSeconds: 60 * 60 * 24 * 7 },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
+        ],
+      },
+    }),
+  ],
 });
