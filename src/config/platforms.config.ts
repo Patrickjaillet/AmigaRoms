@@ -16,30 +16,6 @@ export const PLATFORMS: readonly PlatformConfig[] = [
     archiveCollections: ["softwarelibrary_amiga", "amigaromsdisks"],
     allowedExtensions: ["adf", "lha", "zip"],
   },
-  {
-    platformId: "msdos",
-    displayName: "MS-DOS",
-    archiveCollections: ["softwarelibrary_msdos_games"],
-    allowedExtensions: ["zip", "iso"],
-  },
-  {
-    platformId: "nes",
-    displayName: "Nintendo Entertainment System",
-    archiveCollections: ["nintendofamicomcollection"],
-    allowedExtensions: ["nes", "zip"],
-  },
-  {
-    platformId: "snes",
-    displayName: "Super Nintendo Entertainment System",
-    archiveCollections: ["supernintendocollection"],
-    allowedExtensions: ["sfc", "smc", "zip"],
-  },
-  {
-    platformId: "mame",
-    displayName: "MAME (Arcade)",
-    archiveCollections: ["mame-roms"],
-    allowedExtensions: ["zip", "chd"],
-  },
 ] as const;
 
 export function validatePlatformsConfig(platforms: readonly PlatformConfig[] = PLATFORMS): void {

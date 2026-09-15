@@ -37,7 +37,7 @@ fails the frontend typecheck.
 
 The frontend fetches catalogs at `{BASE_URL}data/{platform}.json` and the
 manifest at `{BASE_URL}data/manifest.json`, where `BASE_URL` is Vite's
-`import.meta.env.BASE_URL` (`/GamesRoms/` in production, matching the
+`import.meta.env.BASE_URL` (`/AmigaRoms/` in production, matching the
 GitHub Pages project path). In dev, `vite.config.ts` registers a middleware
 that serves the repository's `data/` directory under that path so the same
 fetch calls work identically in `vite dev` and in the built site. In CI,
@@ -64,7 +64,7 @@ against `src/tsconfig.json`; ESLint lints them via `svelte-eslint-parser`.
 The result grid is row-virtualized with `@tanstack/svelte-virtual`
 (`src/app/components/VirtualResultGrid.svelte`): only the rows near the
 viewport are mounted, regardless of how many entries match the active
-filters, so the DOM stays small even for a full multi-platform catalog.
+filters, so the DOM stays small even for the full Amiga catalog.
 Column count is derived from the container width at each row height
 estimate, keeping the existing responsive `auto-fill` grid layout.
 

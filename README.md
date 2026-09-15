@@ -1,10 +1,10 @@
-# GamesRoms
+# AmigaRoms
 
-Static ROM catalog and search engine indexing Archive.org collections (Amiga, MS-DOS, NES, SNES, MAME, and more), deployed on GitHub Pages.
+Static Commodore Amiga ROM catalog and search engine indexing Archive.org collections, deployed on GitHub Pages.
 
 ## Screenshot
 
-![GamesRoms UI preview](docs/screenshot.png)
+![AmigaRoms UI preview](docs/screenshot.png)
 
 _UI preview with sample entries — the live catalog data is populated by the indexer._
 
@@ -24,4 +24,4 @@ This project indexes metadata only; every download link points directly to the s
 
 Copyright © 2026 Patrick JAILLET — All rights reserved.
 Email: sandefjord.development@proton.me
-Website: https://patrickjaillet.github.io/GamesRoms
+Website: https://patrickjaillet.github.io/AmigaRoms

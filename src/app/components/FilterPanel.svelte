@@ -13,13 +13,6 @@
     Array.from(new Set(PLATFORMS.flatMap((p) => p.allowedExtensions))).sort(),
   );
 
-  function togglePlatform(platformId: string): void {
-    const platformIds = filters.platformIds.includes(platformId)
-      ? filters.platformIds.filter((id) => id !== platformId)
-      : [...filters.platformIds, platformId];
-    onChange({ ...filters, platformIds });
-  }
-
   function toggleExtension(extension: string): void {
     const extensions = filters.extensions.includes(extension)
       ? filters.extensions.filter((e) => e !== extension)
@@ -44,26 +37,6 @@
 </script>
 
 <aside class="filter-panel" aria-label="Filters">
-  <section>
-    <h2 id="platform-filter-heading">Platform</h2>
-    <ul aria-labelledby="platform-filter-heading">
-      {#each PLATFORMS as platform (platform.platformId)}
-        <li>
-          <label>
-            <input
-              type="checkbox"
-              checked={filters.platformIds.includes(platform.platformId)}
-              onchange={() => {
-                togglePlatform(platform.platformId);
-              }}
-            />
-            {platform.displayName}
-          </label>
-        </li>
-      {/each}
-    </ul>
-  </section>
-
   <section>
     <h2 id="year-filter-heading">Year</h2>
     <div class="year-range">

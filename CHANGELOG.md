@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed (breaking scope narrowing)
+
+- Narrowed the project from a multi-platform catalog (Amiga, MS-DOS, NES, SNES, MAME) to Commodore Amiga only. `src/config/platforms.config.ts` now lists a single platform entry. Renamed the project and GitHub repository from GamesRoms to AmigaRoms (`patrickjaillet.github.io/AmigaRoms`), updated the Vite `base` path, PWA manifest, IndexedDB database name (`amigaroms-cache`), service worker cache name, page title/heading, and footer links accordingly. Removed the now-single-option "Platform" filter from the UI (`FilterPanel.svelte`).
+
 ### Added
 
 - Repository structure: `/scripts` (indexer), `/src` (frontend types/config/utils), `/data` (generated JSON), `/public`.

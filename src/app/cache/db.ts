@@ -16,7 +16,7 @@ interface CachedSearchIndexMeta {
   readonly generatedAt: string;
 }
 
-interface GamesRomsDB extends DBSchema {
+interface AmigaRomsDB extends DBSchema {
   platforms: {
     key: string;
     value: CachedPlatformEntry;
@@ -27,10 +27,10 @@ interface GamesRomsDB extends DBSchema {
   };
 }
 
-let dbPromise: Promise<IDBPDatabase<GamesRomsDB>> | null = null;
+let dbPromise: Promise<IDBPDatabase<AmigaRomsDB>> | null = null;
 
-function getDb(): Promise<IDBPDatabase<GamesRomsDB>> {
-  dbPromise ??= openDB<GamesRomsDB>("gamesroms-cache", CACHE_SCHEMA_VERSION, {
+function getDb(): Promise<IDBPDatabase<AmigaRomsDB>> {
+  dbPromise ??= openDB<AmigaRomsDB>("amigaroms-cache", CACHE_SCHEMA_VERSION, {
     upgrade(database, oldVersion) {
       if (oldVersion < 1) {
         database.createObjectStore("platforms", { keyPath: "platform" });

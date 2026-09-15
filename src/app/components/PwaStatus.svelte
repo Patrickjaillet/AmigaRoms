@@ -44,7 +44,7 @@
   </div>
 {:else if $offlineReady}
   <div class="banner ready" role="status">
-    <span>GamesRoms is ready to work offline.</span>
+    <span>AmigaRoms is ready to work offline.</span>
     <button type="button" onclick={dismissOfflineReady}>Dismiss</button>
   </div>
 {/if}

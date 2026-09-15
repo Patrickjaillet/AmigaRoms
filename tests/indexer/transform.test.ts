@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { itemMetadataToRomEntries, deduplicateAndSort } from "../../scripts/lib/transform.js";
 import { ArchiveOrgItemMetadataSchema } from "../../src/types/archive-org.js";
-import { getPlatformConfig } from "../../src/config/platforms.config.js";
+import { getPlatformConfig, type PlatformConfig } from "../../src/config/platforms.config.js";
 import itemMetadataFixture from "../fixtures/archive-item-metadata.sample.json" with { type: "json" };
 
 const FIXED_INDEXED_AT = "2026-01-01T00:00:00.000Z";
@@ -45,9 +45,13 @@ describe("itemMetadataToRomEntries", () => {
 
   it("filters out extensions not in the platform's allow-list", () => {
     const metadata = ArchiveOrgItemMetadataSchema.parse(itemMetadataFixture);
-    const nes = getPlatformConfig("nes");
-    if (!nes) throw new Error("nes platform config missing");
-    const entries = itemMetadataToRomEntries(metadata, nes, FIXED_INDEXED_AT);
+    const zipOnlyPlatform: PlatformConfig = {
+      platformId: "amiga",
+      displayName: "Commodore Amiga",
+      archiveCollections: ["softwarelibrary_amiga"],
+      allowedExtensions: ["zip"],
+    };
+    const entries = itemMetadataToRomEntries(metadata, zipOnlyPlatform, FIXED_INDEXED_AT);
     expect(entries).toHaveLength(1);
     expect(entries[0]?.fileExtension).toBe("zip");
   });

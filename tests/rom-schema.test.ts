@@ -42,8 +42,7 @@ describe("platforms.config.ts", () => {
     }).not.toThrow();
   });
 
-  it("exposes at least the six platforms named in the roadmap", () => {
-    const ids = PLATFORMS.map((p) => p.platformId);
-    expect(ids).toEqual(expect.arrayContaining(["amiga", "msdos", "nes", "snes", "mame"]));
+  it("exposes only the Commodore Amiga platform", () => {
+    expect(PLATFORMS.map((p) => p.platformId)).toEqual(["amiga"]);
   });
 });

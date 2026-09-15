@@ -138,14 +138,14 @@
 <div class="layout">
   <PwaStatus />
   <header class="site-header">
-    <h1>GamesRoms</h1>
+    <h1>AmigaRoms</h1>
     <div class="search-field">
-      <label for="search-input" class="visually-hidden">Search titles, platforms, file names</label>
+      <label for="search-input" class="visually-hidden">Search titles or file names</label>
       <input
         id="search-input"
         class="search-input"
         type="search"
-        placeholder="Search titles, platforms, file names…"
+        placeholder="Search titles or file names…"
         value={searchQuery}
         oninput={handleSearchInput}
       />
@@ -200,7 +200,7 @@
   <footer class="site-footer">
     Copyright &copy; 2026 Patrick JAILLET — All rights reserved. |
     <a href="mailto:sandefjord.development@proton.me">sandefjord.development@proton.me</a> |
-    <a href="https://patrickjaillet.github.io/GamesRoms">patrickjaillet.github.io/GamesRoms</a>
+    <a href="https://patrickjaillet.github.io/AmigaRoms">patrickjaillet.github.io/AmigaRoms</a>
   </footer>
 </div>
 

@@ -5,7 +5,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { existsSync, createReadStream } from "node:fs";
 import path from "node:path";
 
-const BASE = "/GamesRoms/";
+const BASE = "/AmigaRoms/";
 
 function serveDataDir(): Plugin {
   const dataDir = path.resolve(import.meta.dirname, "data");
@@ -51,9 +51,10 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.png", "apple-touch-icon.png"],
       manifest: {
-        name: "GamesRoms",
-        short_name: "GamesRoms",
-        description: "Static ROM catalog & search engine indexing Archive.org collections.",
+        name: "AmigaRoms",
+        short_name: "AmigaRoms",
+        description:
+          "Static Commodore Amiga ROM catalog & search engine indexing Archive.org collections.",
         theme_color: "#2563eb",
         background_color: "#f7f8fa",
         display: "standalone",
@@ -72,7 +73,7 @@ export default defineConfig({
             urlPattern: /\/data\/.*\.json$/,
             handler: "NetworkFirst",
             options: {
-              cacheName: "gamesroms-data",
+              cacheName: "amigaroms-data",
               networkTimeoutSeconds: 5,
               expiration: { maxEntries: 32, maxAgeSeconds: 60 * 60 * 24 * 7 },
               cacheableResponse: { statuses: [0, 200] },

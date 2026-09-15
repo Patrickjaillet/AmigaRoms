@@ -64,7 +64,7 @@ function jsonResponse(body: unknown): Response {
 
 beforeEach(async () => {
   await getCachedCatalog("__ensure-db-exists__");
-  const db = await openDB("gamesroms-cache", 1);
+  const db = await openDB("amigaroms-cache", 1);
   await db.clear("platforms");
   await db.clear("searchIndexMeta");
   db.close();

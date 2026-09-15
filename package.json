@@ -1,9 +1,9 @@
 {
-  "name": "gamesroms",
+  "name": "amigaroms",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Static ROM catalog & search engine indexing Archive.org collections, built full TypeScript, deployed on GitHub Pages.",
+  "description": "Static Commodore Amiga ROM catalog & search engine indexing Archive.org collections, built full TypeScript, deployed on GitHub Pages.",
   "engines": {
     "node": ">=20"
   },
