@@ -10,9 +10,14 @@
 
   let copiedField = $state<"link" | "md5" | null>(null);
   let dialogElement = $state<HTMLDialogElement | null>(null);
+  const triggerElement =
+    document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
   $effect(() => {
     dialogElement?.showModal();
+    return () => {
+      triggerElement?.focus();
+    };
   });
 
   function formatFileSize(bytes: number): string {
@@ -48,12 +53,13 @@
 <dialog
   bind:this={dialogElement}
   class="download-dialog"
+  aria-labelledby="download-modal-title"
   onclose={onClose}
   onclick={(event) => {
     if (event.target === dialogElement) handleClose();
   }}
 >
-  <h2>{entry.title}</h2>
+  <h2 id="download-modal-title">{entry.title}</h2>
 
   <dl class="details">
     <dt>File</dt>
@@ -67,6 +73,7 @@
         <button
           type="button"
           class="copy-button"
+          aria-label="Copy MD5 checksum"
           onclick={() => {
             void copyToClipboard(entry.md5 ?? "", "md5");
           }}
@@ -80,7 +87,14 @@
   </dl>
 
   <div class="link-row">
-    <input class="link-input" type="text" readonly value={entry.downloadUrl} />
+    <label class="visually-hidden" for="download-link-input">Direct download link</label>
+    <input
+      id="download-link-input"
+      class="link-input"
+      type="text"
+      readonly
+      value={entry.downloadUrl}
+    />
     <button
       type="button"
       class="copy-button"
@@ -213,5 +227,17 @@
 
   .primary-button:hover {
     background: #1d4ed8;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 </style>

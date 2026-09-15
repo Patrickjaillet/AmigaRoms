@@ -46,7 +46,13 @@
   }
 </script>
 
-<div class="virtual-scroll" bind:this={scrollElement} bind:clientWidth={containerWidth}>
+<div
+  class="virtual-scroll"
+  bind:this={scrollElement}
+  bind:clientWidth={containerWidth}
+  role="list"
+  aria-label="Search results"
+>
   <div class="virtual-inner" style:height="{$rowVirtualizerStore.getTotalSize()}px">
     {#each $rowVirtualizerStore.getVirtualItems() as virtualRow (virtualRow.key)}
       <div
@@ -55,7 +61,9 @@
         style:grid-template-columns="repeat({columnCount}, minmax({CARD_MIN_WIDTH}px, 1fr))"
       >
         {#each rowEntries(virtualRow.index) as entry (entry.id)}
-          <ResultCard {entry} />
+          <div role="listitem">
+            <ResultCard {entry} />
+          </div>
         {/each}
       </div>
     {/each}

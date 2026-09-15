@@ -43,10 +43,10 @@
   }
 </script>
 
-<aside class="filter-panel">
+<aside class="filter-panel" aria-label="Filters">
   <section>
-    <h2>Platform</h2>
-    <ul>
+    <h2 id="platform-filter-heading">Platform</h2>
+    <ul aria-labelledby="platform-filter-heading">
       {#each PLATFORMS as platform (platform.platformId)}
         <li>
           <label>
@@ -65,26 +65,34 @@
   </section>
 
   <section>
-    <h2>Year</h2>
+    <h2 id="year-filter-heading">Year</h2>
     <div class="year-range">
-      <input
-        type="number"
-        placeholder="From"
-        value={filters.yearMin ?? ""}
-        oninput={handleYearMinInput}
-      />
-      <input
-        type="number"
-        placeholder="To"
-        value={filters.yearMax ?? ""}
-        oninput={handleYearMaxInput}
-      />
+      <label>
+        <span class="visually-hidden">Year from</span>
+        <input
+          type="number"
+          placeholder="From"
+          aria-labelledby="year-filter-heading"
+          value={filters.yearMin ?? ""}
+          oninput={handleYearMinInput}
+        />
+      </label>
+      <label>
+        <span class="visually-hidden">Year to</span>
+        <input
+          type="number"
+          placeholder="To"
+          aria-labelledby="year-filter-heading"
+          value={filters.yearMax ?? ""}
+          oninput={handleYearMaxInput}
+        />
+      </label>
     </div>
   </section>
 
   <section>
-    <h2>File extension</h2>
-    <ul>
+    <h2 id="extension-filter-heading">File extension</h2>
+    <ul aria-labelledby="extension-filter-heading">
       {#each allExtensions as extension (extension)}
         <li>
           <label>
@@ -103,8 +111,13 @@
   </section>
 
   <section>
-    <h2>Sort</h2>
-    <select value={filters.sort} onchange={handleSortChange}>
+    <h2 id="sort-heading">Sort</h2>
+    <select
+      id="sort-select"
+      aria-labelledby="sort-heading"
+      value={filters.sort}
+      onchange={handleSortChange}
+    >
       <option value="title-asc">Title (A-Z)</option>
       <option value="year-desc">Year (newest)</option>
       <option value="year-asc">Year (oldest)</option>
@@ -151,5 +164,17 @@
 
   select {
     width: 100%;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 </style>

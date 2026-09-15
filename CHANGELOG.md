@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Row-based virtual scrolling for the result grid (`src/app/components/VirtualResultGrid.svelte`, via `@tanstack/svelte-virtual`), rendering only the rows near the viewport regardless of how many entries match the current filters.
 - Skeleton loading state (`src/app/components/ResultCardSkeleton.svelte`) shown while the first platform catalogs are loading.
 - Download confirmation modal (`src/app/components/DownloadModal.svelte`): shows file name, size, and MD5 checksum before downloading, with copy-to-clipboard buttons for the direct download link and the MD5 checksum. The result card's download button now opens this modal instead of linking directly.
+- Accessibility: a visually-hidden, associated label for the search field; `aria-label`/`aria-labelledby` landmarks and headings tying each filter control to its section in `FilterPanel.svelte`; a polite live region in `App.svelte` announcing the current result count; `role="list"`/`role="listitem"` on the virtualized result grid; `aria-labelledby` on the download modal tied to its heading, plus a labeled MD5-copy button and download-link field. Audited with axe-core (0 violations, list view and with the download modal open) and manual keyboard testing (tab order, dialog focus trap, Escape-to-close, and focus returning to the triggering button on close).
 
 ### Changed
 

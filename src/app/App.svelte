@@ -104,13 +104,17 @@
 <div class="layout">
   <header class="site-header">
     <h1>GamesRoms</h1>
-    <input
-      class="search-input"
-      type="search"
-      placeholder="Search titles, platforms, file names…"
-      value={searchQuery}
-      oninput={handleSearchInput}
-    />
+    <div class="search-field">
+      <label for="search-input" class="visually-hidden">Search titles, platforms, file names</label>
+      <input
+        id="search-input"
+        class="search-input"
+        type="search"
+        placeholder="Search titles, platforms, file names…"
+        value={searchQuery}
+        oninput={handleSearchInput}
+      />
+    </div>
   </header>
 
   <div class="content">
@@ -122,6 +126,14 @@
     />
 
     <main class="results">
+      <p class="visually-hidden" role="status" aria-live="polite">
+        {#if loading.kind === "loading" && allEntries.length === 0}
+          Loading catalog…
+        {:else}
+          {filteredResults.length}
+          {filteredResults.length === 1 ? "result" : "results"} found
+        {/if}
+      </p>
       {#if loading.kind === "loading" && allEntries.length === 0}
         <div class="results-grid">
           {#each SKELETON_PLACEHOLDERS as placeholder (placeholder)}
@@ -177,13 +189,30 @@
     font-size: 1.25rem;
   }
 
-  .search-input {
+  .search-field {
     flex: 1;
     min-width: 12rem;
+  }
+
+  .search-input {
+    width: 100%;
+    box-sizing: border-box;
     padding: 0.5rem 0.75rem;
     border-radius: 0.375rem;
     border: 1px solid light-dark(#d8d8d8, #3a3a3a);
     font-size: 0.9rem;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .content {
