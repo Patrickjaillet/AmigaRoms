@@ -1,0 +1,41 @@
+{
+  "name": "gamesroms",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Static ROM catalog & search engine indexing Archive.org collections, built full TypeScript, deployed on GitHub Pages.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "index": "tsx scripts/index.ts",
+    "index:platform": "tsx scripts/index.ts --platform",
+    "build": "vite build",
+    "dev": "vite",
+    "typecheck": "tsc --project scripts/tsconfig.json --noEmit && tsc --project src/tsconfig.json --noEmit && tsc --project tests/tsconfig.json --noEmit",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "idb": "^8.0.0",
+    "minisearch": "^7.1.0",
+    "p-limit": "^6.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "@types/node": "^22.5.0",
+    "@typescript-eslint/eslint-plugin": "^8.5.0",
+    "@typescript-eslint/parser": "^8.5.0",
+    "eslint": "^9.10.0",
+    "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.9.0",
+    "prettier": "^3.3.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.6",
+    "vitest": "^2.1.1"
+  }
+}

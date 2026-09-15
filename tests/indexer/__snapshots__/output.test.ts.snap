@@ -1,0 +1,42 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`writeManifest > writes a schema-valid manifest referencing platform files 1`] = `
+{
+  "generatedAt": "2026-01-01T00:00:00.000Z",
+  "platforms": [
+    {
+      "checksum": "deadbeef",
+      "entryCount": 1,
+      "file": "amiga.json",
+      "lastUpdated": "2026-01-01T00:00:00.000Z",
+      "platform": "amiga",
+    },
+  ],
+  "schemaVersion": 1,
+}
+`;
+
+exports[`writePlatformCatalog > writes a schema-valid, deterministically shaped JSON file 1`] = `
+{
+  "entries": [
+    {
+      "archiveIdentifier": "softwarelibrary_amiga_workbench",
+      "collection": "softwarelibrary_amiga",
+      "downloadUrl": "https://ia601504.us.archive.org/29/items/softwarelibrary_amiga_workbench/Workbench_1.3.adf",
+      "fileExtension": "adf",
+      "fileName": "Workbench_1.3.adf",
+      "fileSizeBytes": 901120,
+      "id": "abc123",
+      "indexedAt": "2026-01-01T00:00:00.000Z",
+      "md5": "a1b2c3d4e5f60718293a4b5c6d7e8f90",
+      "platform": "amiga",
+      "title": "Amiga Workbench 1.3",
+      "year": 1988,
+    },
+  ],
+  "lastUpdated": "2026-01-01T00:00:00.000Z",
+  "platform": "amiga",
+  "schemaVersion": 1,
+  "totalEntries": 1,
+}
+`;

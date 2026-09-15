@@ -1,0 +1,8 @@
+node_modules/
+dist/
+public/build/
+.vite/
+*.log
+.DS_Store
+ROADMAP.md
+CLAUDE.md
