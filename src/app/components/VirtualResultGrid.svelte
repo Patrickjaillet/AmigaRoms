@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createVirtualizer } from "@tanstack/svelte-virtual";
+  import { get } from "svelte/store";
   import type { RomEntry } from "../../types/rom.js";
   import ResultCard from "./ResultCard.svelte";
 
@@ -21,14 +22,23 @@
   );
   const rowCount = $derived(Math.ceil(entries.length / columnCount));
 
-  const rowVirtualizer = $derived(
-    createVirtualizer({
+  const rowVirtualizerStore = createVirtualizer<HTMLDivElement, HTMLDivElement>({
+    count: 0,
+    getScrollElement: () => scrollElement,
+    estimateSize: () => ROW_HEIGHT_ESTIMATE,
+    overscan: 4,
+  });
+  const virtualizer = get(rowVirtualizerStore);
+
+  $effect(() => {
+    virtualizer.setOptions({
       count: rowCount,
       getScrollElement: () => scrollElement,
       estimateSize: () => ROW_HEIGHT_ESTIMATE,
       overscan: 4,
-    }),
-  );
+    });
+    virtualizer.measure();
+  });
 
   function rowEntries(rowIndex: number): readonly RomEntry[] {
     const start = rowIndex * columnCount;
@@ -37,8 +47,8 @@
 </script>
 
 <div class="virtual-scroll" bind:this={scrollElement} bind:clientWidth={containerWidth}>
-  <div class="virtual-inner" style:height="{$rowVirtualizer.getTotalSize()}px">
-    {#each $rowVirtualizer.getVirtualItems() as virtualRow (virtualRow.key)}
+  <div class="virtual-inner" style:height="{$rowVirtualizerStore.getTotalSize()}px">
+    {#each $rowVirtualizerStore.getVirtualItems() as virtualRow (virtualRow.key)}
       <div
         class="virtual-row"
         style:transform="translateY({virtualRow.start}px)"

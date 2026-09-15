@@ -1,12 +1,15 @@
 <script lang="ts">
   import type { RomEntry } from "../../types/rom.js";
   import { getPlatformConfig } from "../../config/platforms.config.js";
+  import DownloadModal from "./DownloadModal.svelte";
 
   interface Props {
     entry: RomEntry;
   }
 
   const { entry }: Props = $props();
+
+  let showModal = $state(false);
 
   const platformLabel = $derived(getPlatformConfig(entry.platform)?.displayName ?? entry.platform);
 
@@ -32,10 +35,25 @@
   </header>
   <h3>{entry.title}</h3>
   <p class="file-meta">{entry.fileName} · {formatFileSize(entry.fileSizeBytes)}</p>
-  <a class="download-button" href={entry.downloadUrl} rel="noopener noreferrer" target="_blank"
-    >Download</a
+  <button
+    type="button"
+    class="download-button"
+    onclick={() => {
+      showModal = true;
+    }}
   >
+    Download
+  </button>
 </article>
+
+{#if showModal}
+  <DownloadModal
+    {entry}
+    onClose={() => {
+      showModal = false;
+    }}
+  />
+{/if}
 
 <style>
   .result-card {
@@ -82,12 +100,15 @@
     align-self: flex-start;
     margin-top: 0.25rem;
     padding: 0.4rem 0.9rem;
+    border: none;
     border-radius: 0.375rem;
     background: #2563eb;
     color: white;
     text-decoration: none;
     font-size: 0.85rem;
     font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
   }
 
   .download-button:hover {

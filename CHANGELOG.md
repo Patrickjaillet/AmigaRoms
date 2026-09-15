@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Branch protection on `main` requiring the CI `quality` check to pass.
 - Row-based virtual scrolling for the result grid (`src/app/components/VirtualResultGrid.svelte`, via `@tanstack/svelte-virtual`), rendering only the rows near the viewport regardless of how many entries match the current filters.
 - Skeleton loading state (`src/app/components/ResultCardSkeleton.svelte`) shown while the first platform catalogs are loading.
+- Download confirmation modal (`src/app/components/DownloadModal.svelte`): shows file name, size, and MD5 checksum before downloading, with copy-to-clipboard buttons for the direct download link and the MD5 checksum. The result card's download button now opens this modal instead of linking directly.
 
 ### Changed
 
@@ -50,3 +51,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Replaced a `while (true)` pagination loop in `scripts/lib/discover.ts` with an equivalent `for` loop, removing the need for an ESLint suppression comment.
 - Removed non-null assertions and non-awaited `async` test helpers in `tests/indexer/*.test.ts` flagged by strict-type-checked lint rules.
 - `scripts/config.ts` now treats empty-string environment variables (as GitHub Actions sets for unset repository variables referenced via `vars.*`) the same as unset ones, applying their defaults instead of failing schema validation. This was causing every `Index` workflow run to crash immediately with "Invalid indexer environment configuration".
+- `VirtualResultGrid.svelte` no longer re-subscribes to its own virtualizer store inside the effect that configures it, which caused an infinite `effect_update_depth_exceeded` loop and prevented any rows (and the download modal, which is nested under a row) from ever rendering.
