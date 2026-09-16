@@ -25,9 +25,15 @@ jobs:
           MAX_CONCURRENT_REQUESTS: ${{ vars.MAX_CONCURRENT_REQUESTS }}
           REQUEST_DELAY_MS: ${{ vars.REQUEST_DELAY_MS }}
           INDEXER_MAX_RETRIES: ${{ vars.INDEXER_MAX_RETRIES }}
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: indexed-data
+          path: data/
+          retention-days: 7
       - id: diff
         run: |
-          if git diff --quiet -- data; then
+          if [ -z "$(git status --porcelain -- data)" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             echo "changed=true" >> "$GITHUB_OUTPUT"
